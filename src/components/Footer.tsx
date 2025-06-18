@@ -92,7 +92,7 @@ export const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-muted-foreground">
                 <Mail className="w-4 h-4" />
-                <span>owner@sajeevsolutions.com</span>
+                <span>contact@sajeevnetworksolutions.com</span>
               </div>
               <div className="flex items-center gap-3 text-muted-foreground">
                 <Phone className="w-4 h-4" />
@@ -100,7 +100,14 @@ export const Footer = () => {
               </div>
               <div className="flex items-center gap-3 text-muted-foreground">
                 <MapPin className="w-4 h-4" />
-                <span>Silicon Valley, CA</span>
+                <span>SHIBU MANUEL
+                      SAJEEV REMODELING SERVICES
+                      5610 WESTBURY PL MADISON WI 53711
+                </span>
+              </div>
+              <div className="flex items-center mt-5 gap-3 text-muted-foreground">
+                <Mail className="w-4 h-4" />
+                <span>Designed By WETEAMRK7</span>
               </div>
             </div>
           </div>
