@@ -99,15 +99,13 @@ export const Footer = () => {
                 <span>+1 (555) 123-4567</span>
               </div>
               <div className="flex items-center gap-3 text-muted-foreground">
-                <MapPin className="w-4 h-4" />
-                <span>SHIBU MANUEL
-                      SAJEEV REMODELING SERVICES
-                      5610 WESTBURY PL MADISON WI 53711
-                </span>
+                <MapPin className="w-5 h-5" />
+                <span>SHIBU MANUEL SAJEEV REMODELING SERVICES 5610 WESTBURY PL MADISON WI 53711 </span>
               </div>
-              <div className="flex items-center mt-10 gap-3 text-muted-foreground">
-                <MapPin className="w-4 h-4" />
+              <div className="flex items-center mt-6 gap-3 text-muted-foreground">
+
                 <span>Designed By WETEAMRK7</span>
+        
               </div>
             </div>
           </div>
