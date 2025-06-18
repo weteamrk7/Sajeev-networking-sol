@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,12 +5,19 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar, Clock, Send, CheckCircle, User, Mail, MessageSquare, Sparkles } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, Send, CheckCircle, User, Mail, MessageSquare, Sparkles } from 'lucide-react'; // Renamed Calendar to CalendarIcon to avoid conflict
 import { useToast } from '@/hooks/use-toast';
+
+// New imports for DatePicker
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar"; // Shadcn Calendar component
+import { format } from "date-fns";
+import { cn } from "@/lib/utils"; // Assuming you have a utility for class names, like from Shadcn setup
+
 
 const services = [
   "Web Development",
-  "App Development", 
+  "App Development",
   "SaaS Solutions",
   "API Integration",
   "Cloud Connectivity",
@@ -32,7 +38,7 @@ export const ConsultationSection = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    preferredDate: '',
+    preferredDate: undefined as Date | undefined, // Changed type to Date | undefined for calendar
     preferredTime: '',
     selectedServices: [] as string[],
     message: ''
@@ -41,6 +47,9 @@ export const ConsultationSection = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [visibleElements, setVisibleElements] = useState(new Set());
   const { toast } = useToast();
+
+  // Replace with your actual Formspree form ID
+  const FORMSPREE_FORM_ID = 'YOUR_FORMSPREE_FORM_ID';
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -79,15 +88,48 @@ export const ConsultationSection = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSubmitted(true);
-      toast({
-        title: "Consultation Booked!",
-        description: "We'll get back to you within 24 hours.",
+    // Format the date for Formspree
+    const formattedDate = formData.preferredDate ? format(formData.preferredDate, 'yyyy-MM-dd') : '';
+
+    try {
+      const response = await fetch(`https://formspree.io/f/${FORMSPREE_FORM_ID}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          preferredDate: formattedDate, // Send formatted date
+          selectedServices: formData.selectedServices.join(', ') // Join services for Formspree
+        }),
       });
-    }, 2000);
+
+      if (response.ok) {
+        setIsSubmitted(true);
+        toast({
+          title: "Consultation Booked!",
+          description: "We'll get back to you within 24 hours.",
+          variant: "default",
+        });
+      } else {
+        const data = await response.json();
+        console.error("Formspree error:", data);
+        toast({
+          title: "Submission Failed",
+          description: data.errors ? data.errors.map((err: any) => err.message).join(", ") : "Something went wrong. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Network or submission error:", error);
+      toast({
+        title: "Submission Failed",
+        description: "There was a problem connecting to the server. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const nextStep = () => {
@@ -101,7 +143,7 @@ export const ConsultationSection = () => {
   const getStepIcon = (stepNumber: number) => {
     switch (stepNumber) {
       case 1: return <User className="w-5 h-5" />;
-      case 2: return <Calendar className="w-5 h-5" />;
+      case 2: return <CalendarIcon className="w-5 h-5" />; // Use CalendarIcon
       case 3: return <MessageSquare className="w-5 h-5" />;
       default: return null;
     }
@@ -135,17 +177,17 @@ export const ConsultationSection = () => {
               </div>
               <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">Thank You!</h2>
               <p className="text-xl text-muted-foreground mb-8">
-                Your consultation request has been submitted successfully. 
+                Your consultation request has been submitted successfully.
                 We'll reach out to you within 24 hours to confirm your appointment.
               </p>
-              <Button 
+              <Button
                 onClick={() => {
                   setIsSubmitted(false);
                   setStep(1);
                   setFormData({
                     name: '',
                     email: '',
-                    preferredDate: '',
+                    preferredDate: undefined, // Reset to undefined
                     preferredTime: '',
                     selectedServices: [],
                     message: ''
@@ -174,7 +216,7 @@ export const ConsultationSection = () => {
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <div 
+        <div
           className={`
             consultation-animate text-center mb-16 transition-all duration-800 ease-out
             ${visibleElements.has('header') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}
@@ -191,7 +233,7 @@ export const ConsultationSection = () => {
 
         <div className="max-w-3xl mx-auto">
           {/* Progress Steps */}
-          <div 
+          <div
             className={`
               consultation-animate flex justify-center mb-12 transition-all duration-800 ease-out
               ${visibleElements.has('progress') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}
@@ -204,8 +246,8 @@ export const ConsultationSection = () => {
                 <div key={stepNumber} className="flex flex-col items-center">
                   <div className={`
                     relative w-16 h-16 rounded-full flex items-center justify-center transition-all duration-500 transform
-                    ${stepNumber <= step 
-                      ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white scale-110' 
+                    ${stepNumber <= step
+                      ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white scale-110'
                       : 'bg-muted text-muted-foreground'
                     }
                   `}>
@@ -234,7 +276,7 @@ export const ConsultationSection = () => {
             </div>
           </div>
 
-          <Card 
+          <Card
             className={`
               consultation-animate shadow-2xl border-0 backdrop-blur-sm bg-background/80 relative overflow-hidden transition-all duration-800 ease-out
               ${visibleElements.has('form-card') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}
@@ -260,6 +302,7 @@ export const ConsultationSection = () => {
                         </Label>
                         <Input
                           id="name"
+                          name="name"
                           value={formData.name}
                           onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                           placeholder="Enter your full name"
@@ -274,6 +317,7 @@ export const ConsultationSection = () => {
                         </Label>
                         <Input
                           id="email"
+                          name="email"
                           type="email"
                           value={formData.email}
                           onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
@@ -291,24 +335,41 @@ export const ConsultationSection = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <Label className="flex items-center gap-2 mb-3">
-                          <Calendar className="w-4 h-4" />
+                          <CalendarIcon className="w-4 h-4" /> {/* Use CalendarIcon here */}
                           Preferred Date *
                         </Label>
-                        <Input
-                          type="date"
-                          value={formData.preferredDate}
-                          onChange={(e) => setFormData(prev => ({ ...prev, preferredDate: e.target.value }))}
-                          required
-                          min={new Date().toISOString().split('T')[0]}
-                          className="transition-all duration-300 border-2 focus:border-blue-500 focus:shadow-lg focus:shadow-blue-500/20"
-                        />
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-full justify-start text-left font-normal transition-all duration-300 border-2 focus:border-blue-500 focus:shadow-lg focus:shadow-blue-500/20",
+                                !formData.preferredDate && "text-muted-foreground"
+                              )}
+                            >
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {formData.preferredDate ? format(formData.preferredDate, "PPP") : <span>Pick a date</span>}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0">
+                            <Calendar
+                              mode="single"
+                              selected={formData.preferredDate}
+                              onSelect={(date) => setFormData(prev => ({ ...prev, preferredDate: date || undefined }))}
+                              initialFocus
+                              fromDate={new Date()} // Prevent selecting past dates
+                            />
+                          </PopoverContent>
+                        </Popover>
+                         {/* Hidden input to send preferredDate to Formspree */}
+                         <input type="hidden" name="preferredDate" value={formData.preferredDate ? format(formData.preferredDate, 'yyyy-MM-dd') : ''} />
                       </div>
                       <div>
                         <Label className="flex items-center gap-2 mb-3">
                           <Clock className="w-4 h-4" />
                           Preferred Time *
                         </Label>
-                        <Select onValueChange={(value) => setFormData(prev => ({ ...prev, preferredTime: value }))}>
+                        <Select onValueChange={(value) => setFormData(prev => ({ ...prev, preferredTime: value }))} value={formData.preferredTime}>
                           <SelectTrigger className="transition-all duration-300 border-2 focus:border-purple-500 focus:shadow-lg focus:shadow-purple-500/20">
                             <SelectValue placeholder="Select a time slot" />
                           </SelectTrigger>
@@ -320,6 +381,7 @@ export const ConsultationSection = () => {
                             ))}
                           </SelectContent>
                         </Select>
+                        <input type="hidden" name="preferredTime" value={formData.preferredTime} />
                       </div>
                     </div>
                   </div>
@@ -336,8 +398,8 @@ export const ConsultationSection = () => {
                           <div key={service} className="group">
                             <div className={`
                               flex items-center space-x-3 p-4 rounded-lg border-2 transition-all duration-300 cursor-pointer
-                              ${formData.selectedServices.includes(service) 
-                                ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-950/20' 
+                              ${formData.selectedServices.includes(service)
+                                ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-950/20'
                                 : 'border-border hover:border-blue-300 hover:bg-blue-50/30'
                               }
                             `}>
@@ -353,6 +415,7 @@ export const ConsultationSection = () => {
                           </div>
                         ))}
                       </div>
+                      <input type="hidden" name="selectedServices" value={formData.selectedServices.join(', ')} />
                     </div>
                     <div>
                       <Label htmlFor="message" className="flex items-center gap-2 mb-3">
@@ -361,6 +424,7 @@ export const ConsultationSection = () => {
                       </Label>
                       <textarea
                         id="message"
+                        name="message"
                         value={formData.message}
                         onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
                         placeholder="Tell us more about your project requirements..."
@@ -373,19 +437,19 @@ export const ConsultationSection = () => {
 
                 <div className="flex gap-4 pt-6">
                   {step > 1 && (
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      onClick={prevStep} 
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={prevStep}
                       className="flex-1 group hover:bg-gradient-to-r hover:from-gray-600 hover:to-gray-700 hover:text-white transition-all duration-300"
                     >
                       Previous
                     </Button>
                   )}
                   {step < 3 ? (
-                    <Button 
-                      type="button" 
-                      onClick={nextStep} 
+                    <Button
+                      type="button"
+                      onClick={nextStep}
                       className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg"
                       disabled={
                         (step === 1 && (!formData.name || !formData.email)) ||
@@ -395,10 +459,10 @@ export const ConsultationSection = () => {
                       Next Step
                     </Button>
                   ) : (
-                    <Button 
-                      type="submit" 
+                    <Button
+                      type="submit"
                       className="flex-1 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 transform hover:scale-105 transition-all duration-300 shadow-lg group"
-                      disabled={isSubmitting || formData.selectedServices.length === 0}
+                      disabled={isSubmitting || formData.selectedServices.length === 0 || !formData.preferredDate} // Added preferredDate check
                     >
                       {isSubmitting ? (
                         <div className="flex items-center">
