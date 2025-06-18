@@ -106,7 +106,7 @@ export const Footer = () => {
                 </span>
               </div>
               <div className="flex items-center mt-10 gap-3 text-muted-foreground">
-                <Design className="w-4 h-4" />
+                <MapPin className="w-4 h-4" />
                 <span>Designed By WETEAMRK7</span>
               </div>
             </div>
