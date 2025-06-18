@@ -49,7 +49,7 @@ export const ConsultationSection = () => {
   const { toast } = useToast();
 
   // Replace with your actual Formspree form ID
-  const FORMSPREE_FORM_ID = 'YOUR_FORMSPREE_FORM_ID';
+  const FORMSPREE_FORM_ID = 'https://formspree.io/f/manjbdbk';
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -92,7 +92,7 @@ export const ConsultationSection = () => {
     const formattedDate = formData.preferredDate ? format(formData.preferredDate, 'yyyy-MM-dd') : '';
 
     try {
-      const response = await fetch(`https://formspree.io/f/${FORMSPREE_FORM_ID}`, {
+      const response = await fetch(`${FORMSPREE_FORM_ID}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
