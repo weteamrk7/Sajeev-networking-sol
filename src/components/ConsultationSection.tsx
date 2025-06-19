@@ -92,7 +92,7 @@ export const ConsultationSection = () => {
     const formattedDate = formData.preferredDate ? format(formData.preferredDate, 'yyyy-MM-dd') : '';
 
     try {
-      const response = await fetch(${FORMSPREE_FORM_ID}, {
+      const response = await fetch(`${FORMSPREE_FORM_ID}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -217,10 +217,10 @@ export const ConsultationSection = () => {
 
       <div className="container mx-auto px-4 relative z-10">
         <div
-          className={
+          className={`
             consultation-animate text-center mb-16 transition-all duration-800 ease-out
             ${visibleElements.has('header') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}
-          }
+          `}
           data-element-id="header"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -234,23 +234,23 @@ export const ConsultationSection = () => {
         <div className="max-w-3xl mx-auto">
           {/* Progress Steps */}
           <div
-            className={
+            className={`
               consultation-animate flex justify-center mb-12 transition-all duration-800 ease-out
               ${visibleElements.has('progress') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}
-            }
+            `}
             data-element-id="progress"
             style={{ transitionDelay: '0.2s' }}
           >
             <div className="flex items-center space-x-8">
               {[1, 2, 3].map((stepNumber) => (
                 <div key={stepNumber} className="flex flex-col items-center">
-                  <div className={
+                  <div className={`
                     relative w-16 h-16 rounded-full flex items-center justify-center transition-all duration-500 transform
                     ${stepNumber <= step
                       ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white scale-110'
                       : 'bg-muted text-muted-foreground'
                     }
-                  }>
+                  `}>
                     {stepNumber < step ? (
                       <CheckCircle className="w-6 h-6" />
                     ) : (
@@ -260,16 +260,16 @@ export const ConsultationSection = () => {
                       <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 animate-ping opacity-20"></div>
                     )}
                   </div>
-                  <span className={mt-2 text-sm font-medium transition-colors duration-300 ${
+                  <span className={`mt-2 text-sm font-medium transition-colors duration-300 ${
                     stepNumber <= step ? 'text-primary' : 'text-muted-foreground'
-                  }}>
+                  }`}>
                     {getStepTitle(stepNumber)}
                   </span>
                   {stepNumber < 3 && (
-                    <div className={
+                    <div className={`
                       absolute top-8 left-24 w-16 h-0.5 transition-all duration-500
                       ${stepNumber < step ? 'bg-gradient-to-r from-blue-500 to-purple-500' : 'bg-muted-foreground/30'}
-                    }></div>
+                    `}></div>
                   )}
                 </div>
               ))}
@@ -277,10 +277,10 @@ export const ConsultationSection = () => {
           </div>
 
           <Card
-            className={
+            className={`
               consultation-animate shadow-2xl border-0 backdrop-blur-sm bg-background/80 relative overflow-hidden transition-all duration-800 ease-out
               ${visibleElements.has('form-card') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}
-            }
+            `}
             data-element-id="form-card"
             style={{ transitionDelay: '0.4s' }}
           >
@@ -396,13 +396,13 @@ export const ConsultationSection = () => {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {services.map((service) => (
                           <div key={service} className="group">
-                            <div className={
+                            <div className={`
                               flex items-center space-x-3 p-4 rounded-lg border-2 transition-all duration-300 cursor-pointer
                               ${formData.selectedServices.includes(service)
                                 ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-950/20'
                                 : 'border-border hover:border-blue-300 hover:bg-blue-50/30'
                               }
-                            }>
+                            `}>
                               <Checkbox
                                 id={service}
                                 checked={formData.selectedServices.includes(service)}
