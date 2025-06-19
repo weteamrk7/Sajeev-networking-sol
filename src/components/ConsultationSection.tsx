@@ -5,15 +5,14 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar as CalendarIcon, Clock, Send, CheckCircle, User, Mail, MessageSquare, Sparkles } from 'lucide-react'; // Renamed Calendar to CalendarIcon to avoid conflict
+import { Calendar as CalendarIcon, Clock, Send, CheckCircle, User, Mail, MessageSquare, Sparkles, Phone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 // New imports for DatePicker
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar"; // Shadcn Calendar component
+import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils"; // Assuming you have a utility for class names, like from Shadcn setup
-
+import { cn } from "@/lib/utils";
 
 const services = [
   "Web Development",
@@ -38,8 +37,8 @@ export const ConsultationSection = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    phone: '', // Added phone field
-    preferredDate: undefined as Date | undefined, // Changed type to Date | undefined for calendar
+    phone: '',
+    preferredDate: undefined as Date | undefined,
     preferredTime: '',
     selectedServices: [] as string[],
     message: ''
@@ -144,7 +143,7 @@ export const ConsultationSection = () => {
   const getStepIcon = (stepNumber: number) => {
     switch (stepNumber) {
       case 1: return <User className="w-5 h-5" />;
-      case 2: return <CalendarIcon className="w-5 h-5" />; // Use CalendarIcon
+      case 2: return <CalendarIcon className="w-5 h-5" />;
       case 3: return <MessageSquare className="w-5 h-5" />;
       default: return null;
     }
@@ -188,8 +187,8 @@ export const ConsultationSection = () => {
                   setFormData({
                     name: '',
                     email: '',
-                    phone: '', // Reset phone field
-                    preferredDate: undefined, // Reset to undefined
+                    phone: '',
+                    preferredDate: undefined,
                     preferredTime: '',
                     selectedServices: [],
                     message: ''
@@ -331,8 +330,8 @@ export const ConsultationSection = () => {
                         </div>
                         <div className="group">
                           <Label htmlFor="phone" className="flex items-center gap-2 mb-2">
-                            <User className="w-4 h-4" />
-                            Phone Number
+                            <Phone className="w-4 h-4" />
+                            Phone Number *
                           </Label>
                           <Input
                             id="phone"
@@ -341,6 +340,7 @@ export const ConsultationSection = () => {
                             value={formData.phone}
                             onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
                             placeholder="Enter your phone number"
+                            required
                             className="transition-all duration-300 border-2 focus:border-cyan-500 focus:shadow-lg focus:shadow-cyan-500/20"
                           />
                         </div>
@@ -354,7 +354,7 @@ export const ConsultationSection = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <Label className="flex items-center gap-2 mb-3">
-                          <CalendarIcon className="w-4 h-4" /> {/* Use CalendarIcon here */}
+                          <CalendarIcon className="w-4 h-4" />
                           Preferred Date *
                         </Label>
                         <Popover>
@@ -439,7 +439,7 @@ export const ConsultationSection = () => {
                     <div>
                       <Label htmlFor="message" className="flex items-center gap-2 mb-3">
                         <MessageSquare className="w-4 h-4" />
-                        Additional Message
+                        More about the project *
                       </Label>
                       <textarea
                         id="message"
@@ -448,6 +448,7 @@ export const ConsultationSection = () => {
                         onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
                         placeholder="Tell us more about your project requirements..."
                         rows={4}
+                        required
                         className="w-full px-4 py-3 border-2 border-border rounded-lg bg-background text-foreground resize-none transition-all duration-300 focus:border-blue-500 focus:shadow-lg focus:shadow-blue-500/20"
                       />
                     </div>
@@ -471,7 +472,7 @@ export const ConsultationSection = () => {
                       onClick={nextStep}
                       className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg"
                       disabled={
-                        (step === 1 && (!formData.name || !formData.email)) ||
+                        (step === 1 && (!formData.name || !formData.email || !formData.phone)) ||
                         (step === 2 && (!formData.preferredDate || !formData.preferredTime))
                       }
                     >
@@ -481,7 +482,7 @@ export const ConsultationSection = () => {
                     <Button
                       type="submit"
                       className="flex-1 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 transform hover:scale-105 transition-all duration-300 shadow-lg group"
-                      disabled={isSubmitting || formData.selectedServices.length === 0 || !formData.preferredDate} // Added preferredDate check
+                      disabled={isSubmitting || formData.selectedServices.length === 0 || !formData.preferredDate || !formData.message}
                     >
                       {isSubmitting ? (
                         <div className="flex items-center">
