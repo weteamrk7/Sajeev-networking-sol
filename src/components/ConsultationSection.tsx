@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar as CalendarIcon, Clock, Send, CheckCircle, User, Mail, MessageSquare, Sparkles, Phone, MapPin } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, Send, CheckCircle, User, Mail, MessageSquare, Sparkles, Phone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
@@ -36,7 +36,6 @@ export const ConsultationSection = () => {
     name: '',
     email: '',
     phone: '',
-    address: '',
     preferredDate: undefined as Date | undefined,
     preferredTime: '',
     selectedServices: [] as string[],
@@ -50,19 +49,22 @@ export const ConsultationSection = () => {
   const FORMSPREE_FORM_ID = 'https://formspree.io/f/manjbdbk';
 
   useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const elementId = entry.target.getAttribute('data-element-id');
-          if (elementId) {
-            setVisibleElements(prev => new Set([...prev, elementId]));
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const elementId = entry.target.getAttribute('data-element-id');
+            if (elementId) {
+              setVisibleElements(prev => new Set([...prev, elementId]));
+            }
           }
-        }
-      });
-    }, {
-      threshold: 0.2,
-      rootMargin: '0px 0px -50px 0px'
-    });
+        });
+      },
+      {
+        threshold: 0.2,
+        rootMargin: '0px 0px -50px 0px'
+      }
+    );
 
     const elements = document.querySelectorAll('.consultation-animate');
     elements.forEach((element) => observer.observe(element));
@@ -82,6 +84,7 @@ export const ConsultationSection = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+
     const formattedDate = formData.preferredDate ? format(formData.preferredDate, 'yyyy-MM-dd') : '';
 
     try {
@@ -149,87 +152,74 @@ export const ConsultationSection = () => {
     }
   };
 
-  // 👇👇 INSERT into Step 1 (Personal Info)
-  const StepOneFields = (
-    <div className="space-y-6 animate-fade-in">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="group">
-          <Label htmlFor="name" className="flex items-center gap-2 mb-2">
-            <User className="w-4 h-4" />
-            Full Name *
-          </Label>
-          <Input
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-            placeholder="Enter your full name"
-            required
-          />
-        </div>
-        <div className="group">
-          <Label htmlFor="email" className="flex items-center gap-2 mb-2">
-            <Mail className="w-4 h-4" />
-            Email Address *
-          </Label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-            placeholder="Enter your email address"
-            required
-          />
-        </div>
-        <div className="group">
-          <Label htmlFor="phone" className="flex items-center gap-2 mb-2">
-            <Phone className="w-4 h-4" />
-            Phone Number *
-          </Label>
-          <Input
-            id="phone"
-            name="phone"
-            value={formData.phone}
-            onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-            placeholder="Enter your phone number"
-            required
-          />
-        </div>
-        <div className="group">
-          <Label htmlFor="address" className="flex items-center gap-2 mb-2">
-            <MapPin className="w-4 h-4" />
-            Address
-          </Label>
-          <Input
-            id="address"
-            name="address"
-            value={formData.address}
-            onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
-            placeholder="Enter your address"
-          />
-        </div>
-      </div>
-    </div>
-  );
-
   return (
-    <section id="consultation" className="py-20 relative">
+    <section id="consultation" className="py-20 bg-gradient-to-br from-blue-50/50 via-purple-50/30 to-cyan-50/50 dark:from-blue-950/30 dark:via-purple-950/20 dark:to-cyan-950/30 relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-3xl mx-auto">
-          <Card>
+          <Card className="shadow-2xl border-0 backdrop-blur-sm bg-background/80 relative overflow-hidden">
             <CardHeader>
-              <CardTitle className="text-2xl text-center">
+              <CardTitle className="text-2xl text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 {getStepTitle(step)}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
-                {step === 1 && StepOneFields}
+                {step === 1 && (
+                  <div className="space-y-6 animate-fade-in">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="group">
+                        <Label htmlFor="name" className="flex items-center gap-2 mb-2">
+                          <User className="w-4 h-4" />
+                          Full Name *
+                        </Label>
+                        <Input
+                          id="name"
+                          name="name"
+                          value={formData.name}
+                          onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                          placeholder="Enter your full name"
+                          required
+                          className="transition-all duration-300 border-2 focus:border-blue-500 focus:shadow-lg focus:shadow-blue-500/20"
+                        />
+                      </div>
+                      <div className="group">
+                        <Label htmlFor="email" className="flex items-center gap-2 mb-2">
+                          <Mail className="w-4 h-4" />
+                          Email Address *
+                        </Label>
+                        <Input
+                          id="email"
+                          name="email"
+                          type="email"
+                          value={formData.email}
+                          onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                          placeholder="Enter your email address"
+                          required
+                          className="transition-all duration-300 border-2 focus:border-purple-500 focus:shadow-lg focus:shadow-purple-500/20"
+                        />
+                      </div>
+                      <div className="group">
+                        <Label htmlFor="phone" className="flex items-center gap-2 mb-2">
+                          <Phone className="w-4 h-4" />
+                          Phone Number *
+                        </Label>
+                        <Input
+                          id="phone"
+                          name="phone"
+                          type="tel"
+                          value={formData.phone}
+                          onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                          placeholder="Enter your phone number"
+                          required
+                          className="transition-all duration-300 border-2 focus:border-green-500 focus:shadow-lg focus:shadow-green-500/20"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
 
-                {/* Keep your Step 2 and Step 3 logic as is here... */}
+                {/* Keep your existing Step 2 and Step 3 code here without changes */}
 
-                {/* Buttons */}
                 <div className="flex gap-4 pt-6">
                   {step > 1 && (
                     <Button type="button" variant="outline" onClick={prevStep}>
@@ -248,7 +238,10 @@ export const ConsultationSection = () => {
                       Next Step
                     </Button>
                   ) : (
-                    <Button type="submit" disabled={isSubmitting || formData.selectedServices.length === 0}>
+                    <Button
+                      type="submit"
+                      disabled={isSubmitting || formData.selectedServices.length === 0}
+                    >
                       {isSubmitting ? "Submitting..." : "Submit Request"}
                     </Button>
                   )}
