@@ -38,6 +38,7 @@ export const ConsultationSection = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    phone: '', // Added phone field
     preferredDate: undefined as Date | undefined, // Changed type to Date | undefined for calendar
     preferredTime: '',
     selectedServices: [] as string[],
@@ -187,6 +188,7 @@ export const ConsultationSection = () => {
                   setFormData({
                     name: '',
                     email: '',
+                    phone: '', // Reset phone field
                     preferredDate: undefined, // Reset to undefined
                     preferredTime: '',
                     selectedServices: [],
@@ -294,7 +296,7 @@ export const ConsultationSection = () => {
               <form onSubmit={handleSubmit} className="space-y-6">
                 {step === 1 && (
                   <div className="space-y-6 animate-fade-in">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 gap-6">
                       <div className="group">
                         <Label htmlFor="name" className="flex items-center gap-2 mb-2">
                           <User className="w-4 h-4" />
@@ -310,21 +312,38 @@ export const ConsultationSection = () => {
                           className="transition-all duration-300 border-2 focus:border-blue-500 focus:shadow-lg focus:shadow-blue-500/20"
                         />
                       </div>
-                      <div className="group">
-                        <Label htmlFor="email" className="flex items-center gap-2 mb-2">
-                          <Mail className="w-4 h-4" />
-                          Email Address *
-                        </Label>
-                        <Input
-                          id="email"
-                          name="email"
-                          type="email"
-                          value={formData.email}
-                          onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                          placeholder="Enter your email address"
-                          required
-                          className="transition-all duration-300 border-2 focus:border-purple-500 focus:shadow-lg focus:shadow-purple-500/20"
-                        />
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="group">
+                          <Label htmlFor="email" className="flex items-center gap-2 mb-2">
+                            <Mail className="w-4 h-4" />
+                            Email Address *
+                          </Label>
+                          <Input
+                            id="email"
+                            name="email"
+                            type="email"
+                            value={formData.email}
+                            onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                            placeholder="Enter your email address"
+                            required
+                            className="transition-all duration-300 border-2 focus:border-purple-500 focus:shadow-lg focus:shadow-purple-500/20"
+                          />
+                        </div>
+                        <div className="group">
+                          <Label htmlFor="phone" className="flex items-center gap-2 mb-2">
+                            <User className="w-4 h-4" />
+                            Phone Number
+                          </Label>
+                          <Input
+                            id="phone"
+                            name="phone"
+                            type="tel"
+                            value={formData.phone}
+                            onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                            placeholder="Enter your phone number"
+                            className="transition-all duration-300 border-2 focus:border-cyan-500 focus:shadow-lg focus:shadow-cyan-500/20"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
