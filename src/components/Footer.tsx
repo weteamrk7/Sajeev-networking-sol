@@ -99,7 +99,7 @@ export const Footer = () => {
                 <span>+1 (555) 123-4567</span>
               </div>
               <div className="flex items-center gap-3 text-muted-foreground">
-                <MapPin className="w-8 h-8" />
+                <MapPin className="w-9 h-9" />
                 <span>SHIBU MANUEL SAJEEV REMODELING SERVICES 5610 WESTBURY PL MADISON WI 53711 </span>
               </div>
               <div className="flex items-center mt-6 gap-3 text-muted-foreground">
@@ -114,7 +114,7 @@ export const Footer = () => {
         {/* Bottom Section */}
         <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-muted-foreground text-sm mb-4 md:mb-0">
-            © 2024 Sajeev Networking Solutions. All rights reserved.
+            © 2025 Sajeev Networking Solutions. All rights reserved.
           </p>
           <Button 
             onClick={scrollToTop}
